@@ -1,0 +1,29 @@
+$font-fancy:       "eloquent-jf-pro", serif;
+$font-slab:        "museo-slab", sans;
+
+$color-white:      #FFF;
+$color-grey-0:     #F7F7F7;
+$color-grey-1:     #C7CAD1;
+$color-grey-3:     #555555;
+$color-grey-4:     #2B2C33;
+$color-punch:      #4AFFF1;
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+@mixin transition($effects) {
+  -webkit-transition: $effects;
+     -moz-transition: $effects;
+       -o-transition: $effects;
+          transition: $effects;
+}
+
+@mixin transform($vals) {
+  -webkit-transform: $vals;
+     -moz-transform: $vals;
+       -o-transform: $vals;
+          transform: $vals;
+}

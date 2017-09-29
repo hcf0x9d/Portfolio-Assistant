@@ -1,0 +1,19 @@
+html {
+  background: $color-grey-0;
+  color: $color-grey-3;
+  font-size: 100%;
+  min-height: 100vh;
+}
+
+body {
+  background: $color-grey-0;
+  min-height: 100vh;
+}
+
+
+@include media("<sm") {
+  main {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
