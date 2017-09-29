@@ -1,0 +1,182 @@
+.birdCage {
+  width: 400px;
+  height: 400px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.owl-head {}
+.eye-half {
+  display: block;
+}
+.eye-half.is-off {
+  display: none;
+}
+.eye-open {
+  display: block;
+}
+.eye-open.is-off {
+  display: none;
+}
+
+/* Blink Routine */
+.anim-eye-blink {
+  animation: OpenBlink 8s linear infinite forwards;
+}
+@keyframes OpenBlink {
+  98.9% {
+    opacity: 1;
+  }
+  99% {
+    opacity: 0;
+  }
+  99.9% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Idle Body Routine */
+.anim-body {
+  animation: BodyMove 20s linear infinite forwards;
+}
+@keyframes BodyMove {
+  9% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(0, 0.25em);
+  }
+
+  50% {
+    transform: translate(0, 0.25em);
+  }
+  51% {
+    transform: translate(-0.25em, 0.5em);
+  }
+  90% {
+    transform: translate(-0.25em, 0.5em);
+  }
+  91% {
+    transform: translate(0, 0.3em);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.anim-head {
+  transition: none;
+  animation: HeadTiltLeftSlight 25s linear infinite forwards;
+  -webkit-transform-origin: center;
+  -moz-transform-origin: center;
+  -ms-transform-origin: center;
+  -o-transform-origin: center;
+  transform-origin: center;
+}
+@keyframes HeadTiltLeftSlight {
+  20% {
+    transform: rotate(0);
+  }
+  21% {
+    transform: rotate(3deg);
+  }
+  32% {
+    transform: rotate(3deg);
+  }
+  33% {
+    transform: rotate(1deg);
+  }
+  78% {
+    transform: rotate(1deg);
+  }
+  79% {
+    transform: rotate(-1deg);
+  }
+  99% {
+    transform: rotate(-1deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+
+/* Pat Scribbs' Head */
+.anim-head-pat {
+  transition: transform .2s ease;
+  animation: HeadPat 1s linear;
+  -webkit-transform-origin: center;
+  -moz-transform-origin: center;
+  -ms-transform-origin: center;
+  -o-transform-origin: center;
+  transform-origin: center;
+}
+@keyframes HeadPat {
+  0% {
+    transform: rotate(0) translateY(0);
+  }
+  10% {
+    transform: rotate(2deg) translateY(30px);
+  }
+  90% {
+    transform: rotate(2deg) translateY(30px);
+  }
+  100% {
+    transform: rotate(0) translateY(0);
+  }
+
+}
+
+/* Pat Scribbs' Head (alt) */
+.anim-head-pat-alt {
+  transition: transform .2s ease;
+  animation: HeadPatAlt 1s linear;
+  -webkit-transform-origin: center;
+  -moz-transform-origin: center;
+  -ms-transform-origin: center;
+  -o-transform-origin: center;
+  transform-origin: center;
+}
+@keyframes HeadPatAlt {
+  0% {
+    transform: rotate(0) translateY(0);
+  }
+  10% {
+    transform: rotate(-2deg) translateY(10px);
+  }
+  90% {
+    transform: rotate(-2deg) translateY(10px);
+  }
+  100% {
+    transform: rotate(0) translateY(0);
+  }
+
+}
+
+/* Scribbles Talking */
+.anim-talk-beak {
+  animation: BeakTalk 1s linear;
+}
+@keyframes BeakTalk {
+  0% {
+    transform: matrix(2.66667, 0, 0, 2.69933, -3991.12, -2702.45);
+  }
+  10% {
+    transform: matrix(2.66667, 0, 0, 2.69933, -3991.12, -2690.45);
+  }
+  20% {
+    transform: matrix(2.66667, 0, 0, 2.69933, -3991.12, -2702.45);
+  }
+  30% {
+    transform: matrix(2.66667, 0, 0, 2.69933, -3991.12, -2690.45);
+  }
+  70% {
+    transform: matrix(2.66667, 0, 0, 2.69933, -3991.12, -2702.45);
+  }
+}

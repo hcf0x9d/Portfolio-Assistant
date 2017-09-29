@@ -169,7 +169,7 @@ ScribblesAssistant = function () {
                 if ( data.result ) {
 
                     // noinspection JSUnresolvedVariable
-                    _this.setResponse( data.result.speech );
+                    _this.setResponse( data.result.speech, 'api' );
 
                     if ( data.result.action === 'github' ) {
 
@@ -178,6 +178,7 @@ ScribblesAssistant = function () {
                         _this.getAnotherAPI( data.result.action, api );
 
                     }
+
                 }
 
             },
@@ -198,10 +199,14 @@ ScribblesAssistant = function () {
      * Build a response element (like a speech bubble)
      *
      * @param {string} response - Text or HTML string to be shown to the client
+     * @param {string} speaker - The entity that is currently doing the talking
      */
     _this.setResponse = function ( response, speaker ) {
 
-        $( "#response" ).append( '<li>' + response + '</li>' );
+
+        $( "#response" ).append( '<li class="item ' + speaker + '"><span class="bubble">' + response + '</span></li>' );
+
+        _this.talkRoutine();
 
     };
 
@@ -243,12 +248,15 @@ ScribblesAssistant = function () {
 
                         var keys = Object.keys( data );
 
+                        // noinspection JSUnresolvedVariable
                         if ( keys.includes( obj[i].repo.name ) ) {
 
+                            // noinspection JSUnresolvedVariable
                             data[ obj[i].repo.name ] += 1;
 
                         } else {
 
+                            // noinspection JSUnresolvedVariable
                             data[ obj[i].repo.name ] = 1;
 
                         }
@@ -276,10 +284,88 @@ ScribblesAssistant = function () {
 
 };
 
-window.onload = function () {
+ScribblesAssistant.prototype.sprite = function () {
 
-    var s = new ScribblesAssistant();
-    s.eventHandler();
+    var _this = this,
+        timer = null,
+        eyeTime = null,
+        talkTimer = null,
+        head = document.getElementById( 'Head' ),
+        openEyes = document.getElementsByClassName( 'eye-open' ),
+        smileEyes = document.getElementsByClassName( 'eye-half' ),
+        beak = document.getElementById( 'Beak' );
+
+    head.addEventListener( 'click', function () {
+
+        patRoutine();
+
+    } );
+
+    _this.talkRoutine = function () {
+
+        beak.classList = 'anim-talk-beak';
+
+        talkTimer = setTimeout( function () {
+
+            beak.classList = '';
+            talkTimer = null;
+
+        }, 2000 );
+
+        if ( Math.floor(Math.random() * 4) + 1  === 3 ) {
+
+            patRoutine();
+        } else if ( Math.floor(Math.random() * 4) + 1  === 4 ) {
+
+            patRoutineAlt();
+
+        }
+
+    }
+
+    function patRoutine () {
+
+        head.classList = 'owl-head anim-head-pat';
+
+        openEyes[0].classList = 'eye-open is-off';
+        openEyes[1].classList = 'eye-open is-off';
+
+        smileEyes[0].classList = 'eye-half anim-eye-blink';
+        smileEyes[1].classList = 'eye-half anim-eye-blink';
+
+        timer = setTimeout( function () {
+
+            head.classList = 'owl-head anim-head';
+            timer = null;
+
+        }, 2000 );
+
+        eyeTime = setTimeout( function () {
+
+            openEyes[0].classList = 'eye-open anim-eye-blink';
+            openEyes[1].classList = 'eye-open anim-eye-blink';
+
+            smileEyes[0].classList = 'eye-half is-off';
+            smileEyes[1].classList = 'eye-half is-off';
+
+            eyeTime = null;
+
+        }, 5000 );
+
+    }
+
+    function patRoutineAlt () {
+
+        head.classList = 'owl-head anim-head-pat-alt';
+
+        timer = setTimeout( function () {
+
+            head.classList = 'owl-head anim-head';
+            timer = null;
+
+        }, 2000 );
+
+    }
 
 };
 
@@ -345,3 +431,14 @@ function cookieMonster ( action, name, value, days ) {
     }
 
 }
+
+window.onload = function () {
+
+    var s = new ScribblesAssistant();
+    s.eventHandler();
+    s.sprite();
+
+    // $( '#response' ).css( 'bottom',  $('.messageWrap').height() - $( '#Beak' ).offset().top  )
+    console.log();
+
+};

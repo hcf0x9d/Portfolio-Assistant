@@ -1,0 +1,34 @@
+.messages {
+  list-style-type: none;
+  position: absolute;
+  width: 100%;
+  bottom: 220px;
+  z-index: 100;
+  font: normal 1.5em/1.25em sans-serif;
+
+  & .item {
+    display: block;
+    margin-bottom: 1em;
+
+    & .bubble {
+      padding: 0.5em;
+      border-radius: 1em;
+    }
+    &.api {
+      text-align: right;
+      & span{
+        max-width: 50%;
+        background: $color-punch;
+        border-bottom-right-radius: 0;
+      }
+    }
+    &.client {
+      text-align: left;
+      & span {
+        background: $color-grey-1;
+        max-width:50%;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+}
