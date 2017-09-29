@@ -1,66 +1,68 @@
+/**
+ * Standard Gulpfile for Jason Fukura's build style
+ *
+ * For now, this is the new standard...
+ * #TheTruthIsPublicDomain
+ *
+ * @type {*|Gulp}
+ */
 
 var gulp        = require( 'gulp' ),
     imagemin    = require( 'gulp-imagemin' ),
     cssmin      = require( 'gulp-cssmin' ),
     htmlmin     = require( 'gulp-htmlmin' ),
-    inline      = require( 'gulp-inline' ),
-    minline     = require( 'gulp-minify-inline' ),
+    // inline      = require( 'gulp-inline' ),
+    // minline     = require( 'gulp-minify-inline' ),
     uglify      = require( 'gulp-uglify' ),
     browserSync = require( 'browser-sync' ),
     reload      = browserSync.reload,
     serve       = require( 'gulp-serve' ),
     psi         = require( 'psi' ),
     ngrok       = require( 'ngrok' ),
-    concat = require( 'gulp-concat' ),
-    sass = require( 'gulp-sass' ),
-    sequence    = require( 'run-sequence' );
+    concat      = require( 'gulp-concat' ),
+    sass        = require( 'gulp-sass' ),
+    sequence    = require( 'run-sequence' ),
+    config      = null;
 
-var config = {
-        // Update the name of the project
-        project : "Personal Portfolio",
-        // All projects should run on Port 3000 unless for a specific reason
-        port    : 3000,
-        // Build folder
-        build   : "dist",
-        // Mapping for images, CSS, SCSS, js, content, fonts and html below
-        images  : {
-            source : "img/*",
-            target : "/img",
-        },
-        css     : {
-            source : "css/*.css",
-            target : "/css",
-        },
-        scss    : {
-            source : "css/*.scss",
-            target : "css/",
-        },
-        js      : {
-            // Your array of scripts to concatenate goes here (be sure to put
-            // them in the order you need)
-            concat : [ 'js/jquery-1.8.2.min.js', 'js/scripts.js', ],
-            // What do you want the final file to be called?
-            name   : 'app.js',
-            target : "js/",
-        },
-        fonts   : {
-            source : "fonts/**/*",
-            target : "/fonts",
-        },
-        view    : {
-            source : "view/*.view.html",
-            target : "/view",
-        },
-        content : {
-            source : "view/*.xml",
-            target : "/view",
-        },
-        html    : {
-            source : "*.html",
-            target : "/",
-        },
-    };
-
+// Config object
+config = {
+    project : "Meet Scribbles",
+    port    : 3000,
+    build   : "dist",
+    images  : {
+        source : "img/*",
+        target : "/img",
+    },
+    css     : {
+        source : "css/*.css",
+        target : "/css",
+    },
+    scss    : {
+        source : "css/*.scss",
+        target : "css/",
+    },
+    js      : {
+        concat : [ 'js/lib/jquery-1.12.4.js', 'js/lib/app.js', ],
+        name   : 'app.js',
+        target : "js/",
+    },
+    fonts   : {
+        source : "fonts/**/*",
+        target : "/fonts",
+    },
+    view    : {
+        source : "view/*.view.html",
+        target : "/view",
+    },
+    content : {
+        source : "view/*.xml",
+        target : "/view",
+    },
+    html    : {
+        source : "*.html",
+        target : "/",
+    },
+};
 
 /* ========================================================================== */
 /* DEVELOPMENT TASKS                                                          */
@@ -72,7 +74,7 @@ gulp.task( 'sass', function () {
         .pipe( sass().on( 'error', sass.logError ) )
         .pipe( gulp.dest( config.scss.target ) );
 
-} )
+} );
 
 // Concatenate scripts
 gulp.task( 'concat-scripts', function () {
@@ -82,7 +84,6 @@ gulp.task( 'concat-scripts', function () {
         .pipe( gulp.dest( config.js.target ) );
 
 } );
-
 
 // Watch Files For Changes & Reload
 gulp.task( 'serve', function () {
@@ -94,7 +95,6 @@ gulp.task( 'serve', function () {
         // https: true, // Can run on https if needed
         server    : [ './', ],
     } );
-
 
     // HTML pages, views and content (XML) changes will require a reload
     gulp.watch( [ '*.html', ], reload );
@@ -109,7 +109,7 @@ gulp.task( 'serve', function () {
     } );
 
     // Script changes require concatenation and reload
-    gulp.watch( [ 'js/*.js', ], function () {
+    gulp.watch( [ 'js/lib/*.js', ], function () {
 
         sequence( 'concat-scripts', reload );
 
@@ -120,7 +120,6 @@ gulp.task( 'serve', function () {
 
 } );
 /* ========================================================================== */
-
 
 gulp.task( 'css', function () {
 

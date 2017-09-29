@@ -1,3 +1,12 @@
+/**
+ * Meet Scribbles:
+ *
+ * Scribbles is Jason's personal web assistant.  Scribbles' sole purpose is to meet people online and answer their
+ * questions, either well, or extremely poorly.
+ *
+ * #TheTruthIsPublicDomain
+ */
+
 var ScribblesAssistant;
 
 ScribblesAssistant = function () {
@@ -42,6 +51,7 @@ ScribblesAssistant = function () {
 
         _this.voiceInputEl.addEventListener( 'click', function () {
 
+            console.log( 'click' );
             _this.switchRecognition();
 
         } );
@@ -156,7 +166,19 @@ ScribblesAssistant = function () {
 
             success : function ( data ) {
 
-                _this.setResponse( JSON.stringify( data, undefined, 2 ) );
+                if ( data.result ) {
+
+                    // noinspection JSUnresolvedVariable
+                    _this.setResponse( data.result.speech );
+
+                    if ( data.result.action === 'github' ) {
+
+                        var api = "https://api.github.com/users/jfukura/events/public";
+
+                        _this.getAnotherAPI( data.result.action, api );
+
+                    }
+                }
 
             },
             error : function () {
@@ -165,19 +187,90 @@ ScribblesAssistant = function () {
 
             },
         } );
-        _this.setResponse( "Loading..." );
+
+        // Kick off a loading function
+        _this.setResponse( _this.textInputEl.value, "client" );
 
     };
 
     /**
      * Set the response of the API into the application and handle it.
+     * Build a response element (like a speech bubble)
      *
-     * @param obj
+     * @param {string} response - Text or HTML string to be shown to the client
      */
-    _this.setResponse = function ( obj ) {
+    _this.setResponse = function ( response, speaker ) {
 
-        // Temporary response handler
-        $( "#response" ).text( obj );
+        $( "#response" ).append( '<li>' + response + '</li>' );
+
+    };
+
+    _this.getAnotherAPI = function ( action, obj ) {
+
+        $.ajax( {
+            type : "GET",
+            url : obj,
+            success : function ( data ) {
+
+                _this.setResponse( formatResponse( data ) );
+
+            },
+            error : function () {
+
+                _this.setResponse( "Internal Server Error" );
+
+            },
+        } );
+
+        /**
+         * Private Method for formatting 3rd party APIs
+         *
+         * @param {Object} obj - Object response from API
+         */
+        function formatResponse ( obj ) {
+
+            var data = {},
+                count = 0,
+                el = '',
+                i;
+
+            // Parsing all of GitHub's responses
+            if ( action === 'github' ) {
+
+                for( i = 0; i < obj.length; i++ ) {
+
+                    if ( Object.keys( data ) ) {
+
+                        var keys = Object.keys( data );
+
+                        if ( keys.includes( obj[i].repo.name ) ) {
+
+                            data[ obj[i].repo.name ] += 1;
+
+                        } else {
+
+                            data[ obj[i].repo.name ] = 1;
+
+                        }
+
+                    }
+
+                    count++;
+
+                }
+
+                for( i = 0; i < Object.keys( data ).length; i++ ) {
+
+                    el += '<span class="" data-percent="' + data[Object.keys( data )[i]] / count * 100 + '">' +
+                        Object.keys( data )[i] + '</span>';
+
+                }
+
+                return el;
+
+            }
+
+        }
 
     };
 
