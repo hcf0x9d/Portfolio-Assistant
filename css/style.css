@@ -769,7 +769,8 @@ p + p {
     margin-bottom: 1em; }
     .messages .item .bubble {
       padding: 0.5em;
-      border-radius: 1em; }
+      border-radius: 1em;
+      display: inline-block; }
     .messages .item.api {
       text-align: right; }
       .messages .item.api span {
@@ -782,6 +783,20 @@ p + p {
         background: #C7CAD1;
         max-width: 50%;
         border-bottom-left-radius: 0; }
+
+.graphItem {
+  display: block;
+  position: relative;
+  margin-bottom: 0.8em; }
+  .graphItem .bar {
+    display: block;
+    background: #4AFFF1;
+    left: 0;
+    bottom: 0;
+    height: 5px; }
+  .graphItem .legend {
+    display: block;
+    font-size: 0.875em; }
 
 .birdCage {
   width: 400px;

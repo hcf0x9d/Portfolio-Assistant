@@ -13,6 +13,7 @@
     & .bubble {
       padding: 0.5em;
       border-radius: 1em;
+      display: inline-block;
     }
     &.api {
       text-align: right;
@@ -30,5 +31,24 @@
         border-bottom-left-radius: 0;
       }
     }
+  }
+}
+
+.graphItem {
+  display: block;
+
+  position: relative;
+  margin-bottom: 0.8em;
+  & .bar {
+    display: block;
+    background: $color-punch;
+    left: 0;
+    bottom: 0;
+    height: 5px;
+  }
+
+  & .legend {
+    display: block;
+    font-size: 0.875em;
   }
 }

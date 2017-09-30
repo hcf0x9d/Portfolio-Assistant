@@ -7,12 +7,10 @@
  * #TheTruthIsPublicDomain
  */
 
-var ScribblesAssistant;
+const ScribblesAssistant = function () {
 
-ScribblesAssistant = function () {
-
-    var _this = this,
-        recognition = null;
+    const _this = this;
+    let recognition = null;
 
     // Setup the model
     _this.accessToken = "ab9dd0fc3b4a433a996a546ff071fcbc";
@@ -73,10 +71,10 @@ ScribblesAssistant = function () {
         };
         recognition.onresult = function ( e ) {
 
-            var text = "";
+            let text = '';
 
             // noinspection JSUnresolvedVariable
-            for( var i = e.resultIndex; i < e.results.length; ++i ) {
+            for( let i = e.resultIndex; i < e.results.length; ++i ) {
 
                 // noinspection JSUnresolvedVariable
                 text += e.results[i][0].transcript;
@@ -152,7 +150,7 @@ ScribblesAssistant = function () {
      */
     _this.send = function () {
 
-        var text = _this.textInputEl.value;
+        let text = _this.textInputEl.value;
 
         $.ajax( {
             type : "POST",
@@ -173,7 +171,26 @@ ScribblesAssistant = function () {
 
                     if ( data.result.action === 'github' ) {
 
-                        var api = "https://api.github.com/users/jfukura/events/public";
+                        const api = "https://api.github.com/users/jfukura/events/public";
+
+                        _this.getAnotherAPI( data.result.action, api );
+
+                    } else if ( data.result.action === 'weather' ) {
+
+                        const res = data.result;
+                        let city = 'Kingston, Washington',
+                            api;
+
+                        // noinspection JSUnresolvedVariable
+                        if ( res.parameters.address.city ) {
+
+                            // noinspection JSUnresolvedVariable
+                            city = res.parameters.address.city
+
+                        }
+
+                        api = `https://query.yahooapis.com/v1/public/yql?q=select item.condition from weather.forecast 
+                            where woeid in (select woeid from geo.places(1) where text='${city}')&format=json`;
 
                         _this.getAnotherAPI( data.result.action, api );
 
@@ -203,8 +220,13 @@ ScribblesAssistant = function () {
      */
     _this.setResponse = function ( response, speaker ) {
 
-
         $( "#response" ).append( '<li class="item ' + speaker + '"><span class="bubble">' + response + '</span></li>' );
+
+        $( '.item:last', '#response' ).css( {
+            opacity : 0,
+        } ).animate( {
+            opacity : 1,
+        }, 250 );
 
         _this.talkRoutine();
 
@@ -217,7 +239,13 @@ ScribblesAssistant = function () {
             url : obj,
             success : function ( data ) {
 
-                _this.setResponse( formatResponse( data ) );
+                console.log( data );
+
+                setTimeout( function () {
+
+                    _this.setResponse( formatResponse( data ) );
+
+                }, 500 );
 
             },
             error : function () {
@@ -234,7 +262,8 @@ ScribblesAssistant = function () {
          */
         function formatResponse ( obj ) {
 
-            var data = {},
+            // TODO: Restructure this using ES6 code
+            let data = {},
                 count = 0,
                 el = '',
                 i;
@@ -242,11 +271,15 @@ ScribblesAssistant = function () {
             // Parsing all of GitHub's responses
             if ( action === 'github' ) {
 
+                el = '<h2 class="subheadline"><a href="https://github.com/jfukura" target="_blank">' +
+                    'Recent GitHub Action</a></h2>';
+
+                // TODO: ES6 upgrade
                 for( i = 0; i < obj.length; i++ ) {
 
                     if ( Object.keys( data ) ) {
 
-                        var keys = Object.keys( data );
+                        const keys = Object.keys( data );
 
                         // noinspection JSUnresolvedVariable
                         if ( keys.includes( obj[i].repo.name ) ) {
@@ -269,12 +302,25 @@ ScribblesAssistant = function () {
 
                 for( i = 0; i < Object.keys( data ).length; i++ ) {
 
-                    el += '<span class="" data-percent="' + data[Object.keys( data )[i]] / count * 100 + '">' +
-                        Object.keys( data )[i] + '</span>';
+                    el += `<span class="graphItem">` +
+                        `<span class="bar" style="width: ${ data[Object.keys( data )[i]] / count * 100 }%"></span>` +
+                        `<a href="https://github.com/${ Object.keys( data )[i] }" target="_blank" class="legend">` +
+                            `${ Object.keys( data )[i] }</a>` +
+                        `</span>`;
 
                 }
 
                 return el;
+
+            } else if ( action === 'weather' ) {
+
+                // noinspection JSUnresolvedVariable
+                let res = obj.query.results.channel.item.condition;
+
+                // noinspection JSUnresolvedVariable
+                return `<li class="item api">
+                            <span class="bubble">It is currently ${res.text} and ${res.temp} degrees</span>
+                        </li>`;
 
             }
 
@@ -286,11 +332,13 @@ ScribblesAssistant = function () {
 
 ScribblesAssistant.prototype.sprite = function () {
 
-    var _this = this,
-        timer = null,
+    const _this = this;
+
+    let timer = null,
         eyeTime = null,
-        talkTimer = null,
-        head = document.getElementById( 'Head' ),
+        talkTimer = null;
+
+    const head = document.getElementById( 'Head' ),
         openEyes = document.getElementsByClassName( 'eye-open' ),
         smileEyes = document.getElementsByClassName( 'eye-half' ),
         beak = document.getElementById( 'Beak' );
@@ -312,16 +360,17 @@ ScribblesAssistant.prototype.sprite = function () {
 
         }, 2000 );
 
-        if ( Math.floor(Math.random() * 4) + 1  === 3 ) {
+        if ( Math.floor( Math.random() * 4 ) + 1  === 3 ) {
 
             patRoutine();
-        } else if ( Math.floor(Math.random() * 4) + 1  === 4 ) {
+
+        } else if ( Math.floor( Math.random() * 4 ) + 1  === 4 ) {
 
             patRoutineAlt();
 
         }
 
-    }
+    };
 
     function patRoutine () {
 
@@ -379,13 +428,11 @@ ScribblesAssistant.prototype.sprite = function () {
  */
 function cookieMonster ( action, name, value, days ) {
 
-    var date = new Date();
-
-    'use strict';
+    let date = new Date(),
+        expires = '';
 
     if ( action === 'store' ) {
 
-        var expires = '';
         if ( days ) {
 
             date.setTime( date.getTime() + ( days * 24 * 60 * 60 * 1000 ) );
@@ -398,7 +445,7 @@ function cookieMonster ( action, name, value, days ) {
 
     } else if ( action === 'get' ) {
 
-        var nameEQ = name + "=",
+        let nameEQ = name + "=",
             ca = document.cookie.split( ';' ),
             i,
             c;
@@ -434,7 +481,7 @@ function cookieMonster ( action, name, value, days ) {
 
 window.onload = function () {
 
-    var s = new ScribblesAssistant();
+    const s = new ScribblesAssistant();
     s.eventHandler();
     s.sprite();
 
