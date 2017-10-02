@@ -11252,7 +11252,6 @@ class ScribblesAssistant {
          */
         function formatResponse ( obj ) {
 
-            // TODO: Restructure this using ES6 code
             let data = {},
                 count = 0,
                 el = '',
@@ -11454,6 +11453,6 @@ function cookieMonster ( action, name, value = '', days = 0 ) {
 
 window.onload = function () {
 
-    const scribbles = new ScribblesAssistant();
+    new ScribblesAssistant();
 
 };

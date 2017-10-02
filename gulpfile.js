@@ -244,8 +244,6 @@ gulp.task( 'psi', [ 'psi-seq', ], function () {
 
 } );
 
-
-
 // Build the final html files
 gulp.task( 'html', function () {
 

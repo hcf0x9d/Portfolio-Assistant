@@ -1,62 +1,76 @@
-$(function () {
+$( function () {
 
-    describe('The Menu', function () {
-        var $menuButton = $('.hamburger');
-        var $menu = $('.menu');
+    describe( 'The Menu', function () {
+
+        var $menuButton = $( '.hamburger' ),
+            $menu = $( '.menu' );
 
         // Make sure we don't see the menu at load
-        it('is hidden at DOM load', function () {
-            expect($menu.hasClass('is-active')).toBe(false);
-            expect($menu.is(':visible')).toBe(false);
-        });
+        it( 'is hidden at DOM load', function () {
+
+            expect( $menu.hasClass( 'is-active' ) ).toBe( false );
+            expect( $menu.is( ':visible' ) ).toBe( false );
+
+        } );
 
         // Can we toggle the menu visibility?
-        it('can be toggled with interaction', function () {
+        it( 'can be toggled with interaction', function () {
+
             $menuButton.click();
-            expect($menuButton.hasClass('is-active')).toBe(true);
-            expect($menu.is(':visible')).toBe(true);
+            expect( $menuButton.hasClass( 'is-active' ) ).toBe( true );
+            expect( $menu.is( ':visible' ) ).toBe( true );
             $menuButton.click();
-            expect($menuButton.hasClass('is-active')).toBe(false);
-            expect($menu.is(':visible')).toBe(false);
-        });
+            expect( $menuButton.hasClass( 'is-active' ) ).toBe( false );
+            expect( $menu.is( ':visible' ) ).toBe( false );
 
-    });
+        } );
 
-    describe('View', function() {
-        beforeEach(function (done) {
-            control.view.change('intro', done);
-        });
+    } );
 
+    describe( 'View', function () {
 
-        it('should load on init', function(done) {
-            expect(control.view.change).toBeDefined();
+        beforeEach( function ( done ) {
+
+            control.view.change( 'intro', done );
+
+        } );
+
+        it( 'should load on init', function ( done ) {
+
+            expect( control.view.change ).toBeDefined();
             done();
-        });
-    });
 
-    describe('View changer', function () {
+        } );
 
-        beforeEach(function (done) {
-            control.view.change('resume', done);
-        });
+    } );
 
-        it('should load a new view', function (done) {
-            expect(control.view.change).toBeDefined();
+    describe( 'View changer', function () {
+
+        beforeEach( function ( done ) {
+
+            control.view.change( 'resume', done );
+
+        } );
+
+        it( 'should load a new view', function ( done ) {
+
+            expect( control.view.change ).toBeDefined();
             done();
-        });
-    });
 
-    describe('Gallery', function() {
+        } );
 
-        it('should have a hover state', function() {
+    } );
+
+    describe( 'Gallery', function () {
+
+        it( 'should have a hover state', function () {
             // expect().toEqual();
-        });
-        it('should navigate to the project', function () {
+        } );
+        it( 'should navigate to the project', function () {
             //
-        });
-    });
+        } );
 
-
+    } );
 
     // RSS Feed Model Tests
     // describe('RSS Feeds', function() {
@@ -87,4 +101,4 @@ $(function () {
 
     // });
 
-});
+} );

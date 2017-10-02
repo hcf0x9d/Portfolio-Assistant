@@ -38,9 +38,6 @@ img {
 /**
  * Responsive grid based on the Bootstrap Grid System
  */
-@-ms-viewport {
-  width: device-width; }
-
 .visible-xs,
 .visible-sm,
 .visible-md,
@@ -331,7 +328,7 @@ img {
   margin-left: 8.33333333%; }
 
 .col-xs-offset-0 {
-  margin-left: 0%; }
+  margin-left: 0; }
 
 @media (min-width: 768px) {
   .container {
@@ -439,7 +436,7 @@ img {
   .col-sm-offset-1 {
     margin-left: 8.33333333%; }
   .col-sm-offset-0 {
-    margin-left: 0%; } }
+    margin-left: 0; } }
 
 @media (min-width: 992px) {
   .container {
@@ -547,7 +544,7 @@ img {
   .col-md-offset-1 {
     margin-left: 8.33333333%; }
   .col-md-offset-0 {
-    margin-left: 0%; } }
+    margin-left: 0; } }
 
 @media (min-width: 1200px) {
   .container {
@@ -655,7 +652,7 @@ img {
   .col-lg-offset-1 {
     margin-left: 8.33333333%; }
   .col-lg-offset-0 {
-    margin-left: 0%; } }
+    margin-left: 0; } }
 
 .clearfix,
 .clearfix:before,
