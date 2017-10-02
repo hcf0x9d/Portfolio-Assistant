@@ -1,14 +1,15 @@
 html {
-  background: $color-grey-0;
-  color: $color-grey-3;
+  background: $eggshell;
+  color: $daveysgrey;
+  font-family: $font-sans;
   font-size: 100%;
   min-height: 100vh;
 }
 
 body {
-  background: $color-grey-0;
   min-height: 100vh;
   display: flex;
+  font-family: $font-sans;
   align-items: center;
 }
 

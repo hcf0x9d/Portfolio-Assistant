@@ -694,15 +694,16 @@ img {
   box-sizing: border-box; }
 
 html {
-  background: #F7F7F7;
-  color: #555555;
+  background: #f2e9dc;
+  color: #595959;
+  font-family: "Quicksand", sans-serif;
   font-size: 100%;
   min-height: 100vh; }
 
 body {
-  background: #F7F7F7;
   min-height: 100vh;
   display: flex;
+  font-family: "Quicksand", sans-serif;
   align-items: center; }
 
 .messageWrap {
@@ -716,13 +717,13 @@ body {
   text-align: center; }
 
 .pageTitle {
-  font: normal 7em/1 "eloquent-jf-pro", serif;
+  font: normal 300 7em/1 "Quicksand", sans-serif;
   margin-bottom: -0.75em;
   margin-top: 0.25em;
   text-transform: lowercase; }
 
 .headline {
-  font: normal 700 1.75em/1.4 "museo-slab", sans;
+  font: normal 700 1.75em/1.4 "Quicksand", sans-serif;
   margin-bottom: 2em;
   position: relative; }
   .headline:after {
@@ -753,9 +754,8 @@ p + p {
   margin-top: 10px; }
 
 .subheadline {
-  font: normal 700 1.5em/1.4 "museo-slab", sans;
-  margin-bottom: 0;
-  margin-top: 40px; }
+  font: normal 700 1.5em/1.4 "Quicksand", sans-serif;
+  margin-bottom: 0.5em; }
 
 .messages {
   list-style-type: none;
@@ -763,7 +763,7 @@ p + p {
   width: 100%;
   bottom: 220px;
   z-index: 100;
-  font: normal 1.5em/1.25em sans-serif; }
+  font: normal 400 1.5em/1.25em "Quicksand", sans-serif; }
   .messages .item {
     display: block;
     margin-bottom: 1em; }
@@ -773,15 +773,18 @@ p + p {
       display: inline-block; }
     .messages .item.api {
       text-align: right; }
-      .messages .item.api span {
-        max-width: 50%;
-        background: #4AFFF1;
+      .messages .item.api .bubble {
+        background: #808f85;
+        color: #FFF;
         border-bottom-right-radius: 0; }
+        .messages .item.api .bubble .subheadline {
+          color: #FFF;
+          text-decoration: none;
+          display: block; }
     .messages .item.client {
       text-align: left; }
-      .messages .item.client span {
-        background: #C7CAD1;
-        max-width: 50%;
+      .messages .item.client .bubble {
+        background: #FFF;
         border-bottom-left-radius: 0; }
 
 .graphItem {
@@ -790,13 +793,41 @@ p + p {
   margin-bottom: 0.8em; }
   .graphItem .bar {
     display: block;
-    background: #4AFFF1;
+    background: #cfd11a;
     left: 0;
     bottom: 0;
     height: 5px; }
   .graphItem .legend {
     display: block;
-    font-size: 0.875em; }
+    color: #FFF;
+    font-size: 0.875em;
+    text-align: left;
+    text-decoration: none;
+    margin-bottom: 5px; }
+
+.inputWrap input {
+  border: 1px solid #808f85;
+  border-radius: 40px;
+  width: 60%;
+  min-height: 40px;
+  padding-left: 10px;
+  padding-right: 10px;
+  vertical-align: middle;
+  outline: none; }
+  .inputWrap input:focus, .inputWrap input:active {
+    border-color: #91c499; }
+
+.record-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #808f85;
+  padding: 4px;
+  border-radius: 100%;
+  outline: none;
+  vertical-align: middle; }
+  .record-button.active {
+    background: #cfd11a; }
 
 .birdCage {
   width: 400px;

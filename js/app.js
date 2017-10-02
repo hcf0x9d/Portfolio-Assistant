@@ -11015,69 +11015,68 @@
  * #TheTruthIsPublicDomain
  */
 
-const ScribblesAssistant = function () {
+let recognition = null;
 
-    const _this = this;
-    let recognition = null;
+class ScribblesAssistant {
 
-    // Setup the model
-    _this.accessToken = "ab9dd0fc3b4a433a996a546ff071fcbc";
-    _this.apiUrl = "https://api.api.ai/v1/";
-    _this.sessionId = Math.random().toString( 36 ).substring( 7 );
-    _this.cookieName = "jfai_scribbs";
+    constructor() {
 
-    // Some inputs that we will need
-    _this.textInputEl = document.getElementById( 'input' );
-    _this.voiceInputEl = document.getElementById( 'rec' );
+        // Setup the model
+        this.accessToken = "ab9dd0fc3b4a433a996a546ff071fcbc";
+        this.apiUrl = "https://api.api.ai/v1/";
+        this.sessionId = Math.random().toString( 36 ).substring( 7 );
+        this.cookieName = "jfai_scribbs";
 
-    // If the cookie doesn't exist, create it, otherwise, grab the old sessionId.
-    if ( cookieMonster( 'get', _this.cookieName, '', 0 ) ) {
+        // Some inputs that we will need
+        this.textInputEl = document.getElementById( 'input' );
+        this.voiceInputEl = document.getElementById( 'rec' );
 
-        _this.sessionId = cookieMonster( 'get', _this.cookieName, '', 0 );
+        // If the cookie doesn't exist, create it, otherwise, grab the old sessionId.
+        if ( cookieMonster( 'get', this.cookieName ) ) {
 
-    } else {
+            this.sessionId = cookieMonster( 'get', this.cookieName );
 
-        cookieMonster( 'store', _this.cookieName, _this.sessionId, 10000 );
+        } else {
+
+            cookieMonster( 'store', this.cookieName, this.sessionId, 10000 );
+
+        }
+
+        this.eventHandler();
+        this.sprite();
 
     }
 
-    _this.eventHandler = function () {
+    eventHandler () {
 
-        _this.textInputEl.addEventListener( 'keypress', function ( e ) {
+        this.textInputEl.addEventListener( 'keypress', ( e ) => {
 
             // On `return`, prevent the default action and send the text content
             if ( e.which === 13 ) {
 
                 e.preventDefault();
-                _this.send();
+                this.send();
 
             }
 
         } );
 
-        _this.voiceInputEl.addEventListener( 'click', function () {
-
-            console.log( 'click' );
-            _this.switchRecognition();
-
-        } );
+        this.voiceInputEl.addEventListener( 'click', () => this.switchRecognition() );
 
     };
 
     /**
      * This uses the webkit voice input handler built in.  Need a polyfil for other browsers.
      */
-    _this.startRecognition = function () {
+    startRecognition () {
+
+        recognition = new webkitSpeechRecognition();// jscs:ignore requireCapitalizedConstructors
 
         // Instantiate the webkit speech recognition
         // noinspection JSUnresolvedFunction
-        recognition = new webkitSpeechRecognition();// jscs:ignore requireCapitalizedConstructors
-        recognition.onstart = function () {
+        recognition.onstart = () => this.updateRec();
 
-            _this.updateRec();
-
-        };
-        recognition.onresult = function ( e ) {
+        recognition.onresult = e => {
 
             let text = '';
 
@@ -11088,21 +11087,19 @@ const ScribblesAssistant = function () {
                 text += e.results[i][0].transcript;
 
             }
-            _this.setInput( text );
-            _this.stopRecognition();
+
+            this.setInput( text );
+            this.stopRecognition();
 
         };
-        recognition.onend = function () {
+        recognition.onend = () => this.stopRecognition();
 
-            _this.stopRecognition();
-
-        };
         recognition.lang = "en-US";
         recognition.start();
 
     };
 
-    _this.stopRecognition = function () {
+    stopRecognition () {
 
         if ( recognition ) {
 
@@ -11111,43 +11108,35 @@ const ScribblesAssistant = function () {
 
         }
 
-        _this.updateRec();
+        this.updateRec();
 
     };
 
     /**
      * Change the recognition function -> start/stop
      */
-    _this.switchRecognition = function () {
+    switchRecognition () {
 
-        if ( recognition ) {
+        recognition ? this.stopRecognition() : this.startRecognition();
 
-            _this.stopRecognition();
+    }
 
-        } else {
+    setInput ( text ) {
 
-            _this.startRecognition();
+        this.textInputEl.text = text;
 
-        }
-
-    };
-
-    _this.setInput = function ( text ) {
-
-        _this.textInputEl.value = text;
-
-        _this.send();
+        this.send();
 
     };
 
     /**
      * Change the contents of the voice input button -> speak/stop
      */
-    _this.updateRec = function () {
+    updateRec () {
 
-        _this.voiceInputEl.innerHTML = recognition ? "Stop" : "Speak";
+        this.voiceInputEl.classList = recognition ? "record-button active" : "record-button";
 
-    };
+    }
 
     /**
      * API.AI call happens here
@@ -11156,69 +11145,66 @@ const ScribblesAssistant = function () {
      *
      * @returns {object}
      */
-    _this.send = function () {
+    send () {
 
-        let text = _this.textInputEl.value;
+        let text = this.textInputEl.value;
+        const url = `${this.apiUrl}query/`;
 
         $.ajax( {
-            type : "POST",
-            url : _this.apiUrl + "query/",
+            type        : "POST",
+            url,
             contentType : "application/json; charset=utf-8",
-            dataType : "json",
-            headers : {
-                Authorization : "Bearer " + _this.accessToken,
+            dataType    : "json",
+            headers     : {
+                Authorization : `Bearer ${this.accessToken}`,
             },
-            data : JSON.stringify( { q : text, lang : "en", sessionId : _this.sessionId, } ),
+            data        : JSON.stringify( { q : text, lang : "en", sessionId : this.sessionId, } ),
 
-            success : function ( data ) {
+            success     :  data => {
+
+                const knownActions = [ 'github', 'weather', ];
 
                 if ( data.result ) {
 
+                    let action = data.result.action;
+
                     // noinspection JSUnresolvedVariable
-                    _this.setResponse( data.result.speech, 'api' );
-
-                    if ( data.result.action === 'github' ) {
-
-                        const api = "https://api.github.com/users/jfukura/events/public";
-
-                        _this.getAnotherAPI( data.result.action, api );
-
-                    } else if ( data.result.action === 'weather' ) {
-
-                        const res = data.result;
-                        let city = 'Kingston, Washington',
-                            api;
-
-                        // noinspection JSUnresolvedVariable
-                        if ( res.parameters.address.city ) {
-
-                            // noinspection JSUnresolvedVariable
-                            city = res.parameters.address.city
-
-                        }
-
-                        api = `https://query.yahooapis.com/v1/public/yql?q=select item.condition from weather.forecast 
-                            where woeid in (select woeid from geo.places(1) where text='${city}')&format=json`;
-
-                        _this.getAnotherAPI( data.result.action, api );
-
-                    }
+                    knownActions.includes( action ) ? this.setupAnotherAPICall( data.result ) :
+                        this.setResponse( data.result.speech );
 
                 }
 
             },
-            error : function () {
-
-                _this.setResponse( "Internal Server Error" );
-
-            },
+            error       : () => this.setResponse( "Internal Server Error" ),
         } );
 
         // Kick off a loading function
-        _this.setResponse( _this.textInputEl.value, "client" );
+        this.setResponse( this.textInputEl.value, "client" );
 
     };
 
+    setupAnotherAPICall ( request ) {
+
+        let api = '';
+
+        if ( request.action === 'github' ) {
+
+            api = "https://api.github.com/users/jfukura/events/public";
+
+            this.getAnotherAPI( request.action, api );
+
+        } else if ( request.action === 'weather' ) {
+
+            const city = request.parameters.address.city ? request.parameters.address.city : 'Kingston, Washington';
+
+            api = `https://query.yahooapis.com/v1/public/yql?q=select item.condition from weather.forecast 
+                            where woeid in (select woeid from geo.places(1) where text='${city}')&format=json`;
+
+            this.getAnotherAPI( request.action, api );
+
+        }
+
+    };
     /**
      * Set the response of the API into the application and handle it.
      * Build a response element (like a speech bubble)
@@ -11226,9 +11212,9 @@ const ScribblesAssistant = function () {
      * @param {string} response - Text or HTML string to be shown to the client
      * @param {string} speaker - The entity that is currently doing the talking
      */
-    _this.setResponse = function ( response, speaker ) {
+    setResponse ( response, speaker = 'api' ) {
 
-        $( "#response" ).append( '<li class="item ' + speaker + '"><span class="bubble">' + response + '</span></li>' );
+        $( "#response" ).append( `<li class="item ${speaker}"><span class="bubble">${response}</span></li>` );
 
         $( '.item:last', '#response' ).css( {
             opacity : 0,
@@ -11236,31 +11222,27 @@ const ScribblesAssistant = function () {
             opacity : 1,
         }, 250 );
 
-        _this.talkRoutine();
+        speaker === 'api' ? this.talkRoutine() : false;
 
     };
 
-    _this.getAnotherAPI = function ( action, obj ) {
+    getAnotherAPI ( action, url ) {
 
         $.ajax( {
-            type : "GET",
-            url : obj,
-            success : function ( data ) {
 
-                console.log( data );
+            type    : "GET",
+            url,
+            success : data => {
 
-                setTimeout( function () {
+                setTimeout( () => {
 
-                    _this.setResponse( formatResponse( data ) );
+                    this.setResponse( formatResponse( data ) );
 
                 }, 500 );
 
             },
-            error : function () {
+            error   : () => this.setResponse( "Internal Server Error" ),
 
-                _this.setResponse( "Internal Server Error" );
-
-            },
         } );
 
         /**
@@ -11274,49 +11256,38 @@ const ScribblesAssistant = function () {
             let data = {},
                 count = 0,
                 el = '',
-                i;
+                title = '';
 
             // Parsing all of GitHub's responses
             if ( action === 'github' ) {
 
-                el = '<h2 class="subheadline"><a href="https://github.com/jfukura" target="_blank">' +
-                    'Recent GitHub Action</a></h2>';
+                title = 'Recent GitHub Action';
+                el = `<a class="subheadline" href="https://github.com/jfukura" target="_blank">${title}</a>`;
 
-                // TODO: ES6 upgrade
-                for( i = 0; i < obj.length; i++ ) {
+                obj.forEach( function ( el ) {
 
-                    if ( Object.keys( data ) ) {
+                    if ( !data[el.repo.name] ) {
 
-                        const keys = Object.keys( data );
+                        data[el.repo.name] = 1;
 
-                        // noinspection JSUnresolvedVariable
-                        if ( keys.includes( obj[i].repo.name ) ) {
+                    } else {
 
-                            // noinspection JSUnresolvedVariable
-                            data[ obj[i].repo.name ] += 1;
-
-                        } else {
-
-                            // noinspection JSUnresolvedVariable
-                            data[ obj[i].repo.name ] = 1;
-
-                        }
+                        data[el.repo.name]++
 
                     }
 
                     count++;
 
-                }
+                } );
 
-                for( i = 0; i < Object.keys( data ).length; i++ ) {
+                Object.keys( data ).forEach( repo => {
 
                     el += `<span class="graphItem">` +
-                        `<span class="bar" style="width: ${ data[Object.keys( data )[i]] / count * 100 }%"></span>` +
-                        `<a href="https://github.com/${ Object.keys( data )[i] }" target="_blank" class="legend">` +
-                            `${ Object.keys( data )[i] }</a>` +
+                        `<a href="https://github.com/${ repo }" target="_blank" class="legend">${ repo }</a>` +
+                        `<span class="bar" style="width: ${ data[repo] / count * 100 }%"></span>` +
                         `</span>`;
 
-                }
+                } );
 
                 return el;
 
@@ -11326,9 +11297,9 @@ const ScribblesAssistant = function () {
                 let res = obj.query.results.channel.item.condition;
 
                 // noinspection JSUnresolvedVariable
-                return `<li class="item api">
-                            <span class="bubble">It is currently ${res.text} and ${res.temp} degrees</span>
-                        </li>`;
+                return `<li class="item api">` +
+                            `<span class="bubble">It is currently ${res.text} and ${res.temp} degrees</span>` +
+                        `</li>`;
 
             }
 
@@ -11336,95 +11307,89 @@ const ScribblesAssistant = function () {
 
     };
 
-};
+    sprite () {
 
-ScribblesAssistant.prototype.sprite = function () {
+        let timer = null,
+            eyeTime = null,
+            talkTimer = null,
+            patRoutine;         // Function
 
-    const _this = this;
+        const head = document.getElementById( 'Head' ),
+            openEyes = document.getElementsByClassName( 'eye-open' ),
+            smileEyes = document.getElementsByClassName( 'eye-half' ),
+            beak = document.getElementById( 'Beak' );
 
-    let timer = null,
-        eyeTime = null,
-        talkTimer = null;
+        head.addEventListener( 'click', () => patRoutine() );
 
-    const head = document.getElementById( 'Head' ),
-        openEyes = document.getElementsByClassName( 'eye-open' ),
-        smileEyes = document.getElementsByClassName( 'eye-half' ),
-        beak = document.getElementById( 'Beak' );
+        this.talkRoutine = () => {
 
-    head.addEventListener( 'click', function () {
+            beak.classList = 'anim-talk-beak';
 
-        patRoutine();
+            talkTimer = setTimeout( () => {
 
-    } );
+                beak.classList = '';
+                talkTimer = null;
 
-    _this.talkRoutine = function () {
+            }, 2000 );
 
-        beak.classList = 'anim-talk-beak';
+            // Occasionally we will run a patRoutine while talking
+            if ( Math.floor( Math.random() * 4 ) + 1 === 3 ) {
 
-        talkTimer = setTimeout( function () {
+                patRoutine();
 
-            beak.classList = '';
-            talkTimer = null;
+            } else if ( Math.floor( Math.random() * 4 ) + 1 === 4 ) {
 
-        }, 2000 );
+                patRoutine( 'alt' );
 
-        if ( Math.floor( Math.random() * 4 ) + 1  === 3 ) {
+            }
 
-            patRoutine();
+        };
 
-        } else if ( Math.floor( Math.random() * 4 ) + 1  === 4 ) {
+        /**
+         * When we pat the bird, do something cute
+         */
+        patRoutine = ( routine ) => {
 
-            patRoutineAlt();
+            if ( routine !== 'alt' ) {
+
+                head.classList = 'owl-head anim-head-pat';
+
+                openEyes[0].classList = 'eye-open is-off';
+                openEyes[1].classList = 'eye-open is-off';
+
+                smileEyes[0].classList = 'eye-half anim-eye-blink';
+                smileEyes[1].classList = 'eye-half anim-eye-blink';
+
+            } else {
+
+                head.classList = 'owl-head anim-head-pat-alt';
+
+            }
+
+            timer = setTimeout( () => {
+
+                head.classList = 'owl-head anim-head';
+                timer = null;
+
+            }, 2000 );
+
+            eyeTime = setTimeout( () => {
+
+                openEyes[0].classList = 'eye-open anim-eye-blink';
+                openEyes[1].classList = 'eye-open anim-eye-blink';
+
+                smileEyes[0].classList = 'eye-half is-off';
+                smileEyes[1].classList = 'eye-half is-off';
+
+                eyeTime = null;
+
+            }, 5000 );
 
         }
 
     };
 
-    function patRoutine () {
-
-        head.classList = 'owl-head anim-head-pat';
-
-        openEyes[0].classList = 'eye-open is-off';
-        openEyes[1].classList = 'eye-open is-off';
-
-        smileEyes[0].classList = 'eye-half anim-eye-blink';
-        smileEyes[1].classList = 'eye-half anim-eye-blink';
-
-        timer = setTimeout( function () {
-
-            head.classList = 'owl-head anim-head';
-            timer = null;
-
-        }, 2000 );
-
-        eyeTime = setTimeout( function () {
-
-            openEyes[0].classList = 'eye-open anim-eye-blink';
-            openEyes[1].classList = 'eye-open anim-eye-blink';
-
-            smileEyes[0].classList = 'eye-half is-off';
-            smileEyes[1].classList = 'eye-half is-off';
-
-            eyeTime = null;
-
-        }, 5000 );
-
-    }
-
-    function patRoutineAlt () {
-
-        head.classList = 'owl-head anim-head-pat-alt';
-
-        timer = setTimeout( function () {
-
-            head.classList = 'owl-head anim-head';
-            timer = null;
-
-        }, 2000 );
-
-    }
-
-};
+}
 
 /**
  * Cookie Handler Function!
@@ -11434,7 +11399,7 @@ ScribblesAssistant.prototype.sprite = function () {
  * @param  {string} value  The stringified content for the cookie (consider B64)
  * @param  {number} days  Number of days to set for expiry of the cookie (optional)
  */
-function cookieMonster ( action, name, value, days ) {
+function cookieMonster ( action, name, value = '', days = 0 ) {
 
     let date = new Date(),
         expires = '';
@@ -11489,11 +11454,6 @@ function cookieMonster ( action, name, value, days ) {
 
 window.onload = function () {
 
-    const s = new ScribblesAssistant();
-    s.eventHandler();
-    s.sprite();
-
-    // $( '#response' ).css( 'bottom',  $('.messageWrap').height() - $( '#Beak' ).offset().top  )
-    console.log();
+    const scribbles = new ScribblesAssistant();
 
 };

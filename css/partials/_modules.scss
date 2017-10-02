@@ -4,7 +4,7 @@
   width: 100%;
   bottom: 220px;
   z-index: 100;
-  font: normal 1.5em/1.25em sans-serif;
+  font: normal 400 1.5em/1.25em $font-sans;
 
   & .item {
     display: block;
@@ -17,17 +17,23 @@
     }
     &.api {
       text-align: right;
-      & span{
-        max-width: 50%;
-        background: $color-punch;
+
+      & .bubble{
+        background: $mummystomb;
+        color: $color-white;
         border-bottom-right-radius: 0;
+
+        & .subheadline {
+          color: $color-white;
+          text-decoration: none;
+          display: block;
+        }
       }
     }
     &.client {
       text-align: left;
-      & span {
-        background: $color-grey-1;
-        max-width:50%;
+      & .bubble {
+        background: $color-white;
         border-bottom-left-radius: 0;
       }
     }
@@ -36,12 +42,12 @@
 
 .graphItem {
   display: block;
-
   position: relative;
   margin-bottom: 0.8em;
+
   & .bar {
     display: block;
-    background: $color-punch;
+    background: $bitterlemon;
     left: 0;
     bottom: 0;
     height: 5px;
@@ -49,6 +55,41 @@
 
   & .legend {
     display: block;
+    color: $color-white;
     font-size: 0.875em;
+    text-align: left;
+    text-decoration: none;
+    margin-bottom: 5px;
+  }
+}
+
+.inputWrap {
+  & input {
+    border: 1px solid $mummystomb;
+    border-radius: 40px;
+    width: 60%;
+    min-height: 40px;
+    padding-left:10px;
+    padding-right: 10px;
+    vertical-align: middle;
+    outline: none;
+
+    &:focus, &:active {
+      border-color: $etonblue;
+    }
+  }
+}
+.record-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: $mummystomb;
+  padding: 4px;
+  border-radius: 100%;
+  outline: none;
+  vertical-align: middle;
+
+  &.active {
+    background: $bitterlemon;
   }
 }
